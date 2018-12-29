@@ -853,6 +853,17 @@ public class ExpressionBuilderTest {
     }
 
     @Test
+    public void testExpressionBuilder022AlternativeMultiplyChar()   {
+        Expression e = new ExpressionBuilder("7×x + 3×y")
+                .variables("x", "y")
+                .build()
+                .setVariable("x", 1)
+                .setVariable("y", 2);
+        double result = e.evaluate();
+        assertEquals(13d, result, 0.0);
+    }
+
+    @Test
     public void testExpressionBuilder03()   {
         double varX = 1.3d;
         double varY = 4.22d;
@@ -1941,6 +1952,15 @@ public class ExpressionBuilderTest {
     @Test
     public void testExpression85()   {
         Expression e = new ExpressionBuilder("1/2x")
+                .variables("x")
+                .build()
+                .setVariable("x", 6);
+        assertEquals(3d, e.evaluate(), 0d);
+    }
+
+    @Test
+    public void testExpression855AlternativeDivisionChar()   {
+        Expression e = new ExpressionBuilder("1÷2x")
                 .variables("x")
                 .build()
                 .setVariable("x", 6);

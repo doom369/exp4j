@@ -86,25 +86,27 @@ public abstract class Operators {
 
     public static Operator getBuiltinOperator(final char symbol, final int numArguments) {
         switch(symbol) {
-            case '+':
+            case '+' :
                 if (numArguments != 1) {
                     return builtinOperators[INDEX_ADDITION];
                 }else{
                     return builtinOperators[INDEX_UNARYPLUS];
                 }
-            case '-':
+            case '-' :
                 if (numArguments != 1) {
                     return builtinOperators[INDEX_SUBTRACTION];
                 }else{
                     return builtinOperators[INDEX_UNARYMINUS];
                 }
-            case '*':
+            case '×' :
+            case '*' :
                 return builtinOperators[INDEX_MUTLIPLICATION];
-            case '/':
+            case '/' :
+            case '÷' :
                 return builtinOperators[INDEX_DIVISION];
-            case '^':
+            case '^' :
                 return builtinOperators[INDEX_POWER];
-            case '%':
+            case '%' :
                 return builtinOperators[INDEX_MODULO];
             default:
                 return null;

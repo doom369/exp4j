@@ -55,7 +55,7 @@ public abstract class Operator {
     /**
      * The set of allowed operator chars
      */
-    private static final char[] ALLOWED_OPERATOR_CHARS = { '+', '-', '*', '/', '%', '^', '!', '#','§', '$', '&', ';', ':', '~', '<', '>', '|', '='};
+    private static final char[] ALLOWED_OPERATOR_CHARS = { '+', '-', '*', '×', '/', '÷', '%', '^', '!', '#','§', '$', '&', ';', ':', '~', '<', '>', '|', '='};
 
     private final int numOperands;
     private final boolean leftAssociative;
