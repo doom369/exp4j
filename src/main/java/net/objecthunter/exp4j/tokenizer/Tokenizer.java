@@ -43,8 +43,8 @@ public class Tokenizer {
     private Token lastToken;
 
 
-    public Tokenizer(String expression, final Map<String, Function> userFunctions,
-            final Map<String, Operator> userOperators, final Set<String> variableNames, final boolean implicitMultiplication) {
+    public Tokenizer(String expression, Map<String, Function> userFunctions,
+            Map<String, Operator> userOperators, Set<String> variableNames, boolean implicitMultiplication) {
         this.expression = expression.trim().toCharArray();
         this.expressionLength = this.expression.length;
         this.userFunctions = userFunctions;
@@ -53,8 +53,8 @@ public class Tokenizer {
         this.implicitMultiplication = implicitMultiplication;
     }
 
-    public Tokenizer(String expression, final Map<String, Function> userFunctions,
-                     final Map<String, Operator> userOperators, final Set<String> variableNames) {
+    public Tokenizer(String expression, Map<String, Function> userFunctions,
+                     Map<String, Operator> userOperators, Set<String> variableNames) {
         this.expression = expression.trim().toCharArray();
         this.expressionLength = this.expression.length;
         this.userFunctions = userFunctions;
@@ -74,12 +74,10 @@ public class Tokenizer {
         }
         if (Character.isDigit(ch) || ch == '.') {
             if (lastToken != null) {
-                if (lastToken.getType() == Token.TOKEN_NUMBER) {
+                int type = lastToken.getType();
+                if (type == Token.TOKEN_NUMBER) {
                     throw new IllegalArgumentException("Unable to parse char '" + ch + "' (Code:" + (int) ch + ") at [" + pos + "]");
-                } else if (implicitMultiplication && (lastToken.getType() != Token.TOKEN_OPERATOR
-                        && lastToken.getType() != Token.TOKEN_PARENTHESES_OPEN
-                        && lastToken.getType() != Token.TOKEN_FUNCTION
-                        && lastToken.getType() != Token.TOKEN_SEPARATOR)) {
+                } else if (implicitMultiplication && isParamToken(type)) {
                     // insert an implicit multiplication token
                     lastToken = new OperatorToken(Operators.getBuiltinOperator('*', 2));
                     return lastToken;
@@ -89,11 +87,7 @@ public class Tokenizer {
         } else if (isArgumentSeparator(ch)) {
             return parseArgumentSeparatorToken();
         } else if (isOpenParentheses(ch)) {
-            if (lastToken != null && implicitMultiplication &&
-                    (lastToken.getType() != Token.TOKEN_OPERATOR
-                            && lastToken.getType() != Token.TOKEN_PARENTHESES_OPEN
-                            && lastToken.getType() != Token.TOKEN_FUNCTION
-                            && lastToken.getType() != Token.TOKEN_SEPARATOR)) {
+            if (lastToken != null && implicitMultiplication && isParamToken(lastToken.getType())) {
                 // insert an implicit multiplication token
                 lastToken = new OperatorToken(Operators.getBuiltinOperator('*', 2));
                 return lastToken;
@@ -105,11 +99,7 @@ public class Tokenizer {
             return parseOperatorToken(ch);
         } else if (isAlphabetic(ch) || ch == '_') {
             // parse the name which can be a setVariable or a function
-            if (lastToken != null && implicitMultiplication &&
-                    (lastToken.getType() != Token.TOKEN_OPERATOR
-                            && lastToken.getType() != Token.TOKEN_PARENTHESES_OPEN
-                            && lastToken.getType() != Token.TOKEN_FUNCTION
-                            && lastToken.getType() != Token.TOKEN_SEPARATOR)) {
+            if (lastToken != null && implicitMultiplication && isParamToken(lastToken.getType())) {
                 // insert an implicit multiplication token
                 lastToken = new OperatorToken(Operators.getBuiltinOperator('*', 2));
                 return lastToken;
@@ -118,6 +108,13 @@ public class Tokenizer {
 
         }
         throw new IllegalArgumentException("Unable to parse char '" + ch + "' (Code:" + (int) ch + ") at [" + pos + "]");
+    }
+
+    private static boolean isParamToken(int type) {
+        return type != Token.TOKEN_OPERATOR
+                && type != Token.TOKEN_PARENTHESES_OPEN
+                && type != Token.TOKEN_FUNCTION
+                && type != Token.TOKEN_SEPARATOR;
     }
 
     private Token parseArgumentSeparatorToken() {
