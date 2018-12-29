@@ -15,6 +15,7 @@
  */
 package net.objecthunter.exp4j;
 
+import net.objecthunter.exp4j.exceptions.VariableNotSetException;
 import net.objecthunter.exp4j.function.Function;
 import net.objecthunter.exp4j.function.Functions;
 import net.objecthunter.exp4j.operator.Operator;
@@ -105,18 +106,21 @@ public class Expression {
         return variables;
     }
 
+    public void validateVariables() {
+        for (Token token : this.tokens) {
+            if (token.getType() == Token.TOKEN_VARIABLE) {
+                String variableName = ((VariableToken) token).getName();
+                if (!variables.containsKey(variableName)) {
+                    throw new VariableNotSetException(variableName);
+                }
+            }
+        }
+    }
+
     public ValidationResult validate(boolean checkVariablesSet) {
         List<String> errors = new ArrayList<String>(0);
         if (checkVariablesSet) {
-            /* check that all vars have a value set */
-            for (Token t : this.tokens) {
-                if (t.getType() == Token.TOKEN_VARIABLE) {
-                    String var = ((VariableToken) t).getName();
-                    if (!variables.containsKey(var)) {
-                        errors.add("The setVariable '" + var + "' has not been set");
-                    }
-                }
-            }
+            validateVariables();
         }
 
         /* Check if the number of operands, functions and operators match.
