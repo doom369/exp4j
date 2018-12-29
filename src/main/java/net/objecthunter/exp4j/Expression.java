@@ -45,7 +45,7 @@ public class Expression {
     private final Set<String> userFunctionNames;
 
     private static Map<String, Double> createDefaultVariables() {
-        Map<String, Double> vars = new HashMap<String, Double>(4);
+        Map<String, Double> vars = new HashMap<>(4);
         vars.put("pi", Math.PI);
         vars.put("π", Math.PI);
         vars.put("φ", 1.61803398874d);
@@ -60,9 +60,9 @@ public class Expression {
      */
     public Expression(final Expression existing) {
     	this.tokens = Arrays.copyOf(existing.tokens, existing.tokens.length);
-    	this.variables = new HashMap<String,Double>();
+    	this.variables = new HashMap<>();
     	this.variables.putAll(existing.variables);
-    	this.userFunctionNames = new HashSet<String>(existing.userFunctionNames);
+    	this.userFunctionNames = new HashSet<>(existing.userFunctionNames);
     }
 
     Expression(final Token[] tokens) {
@@ -97,7 +97,7 @@ public class Expression {
     }
 
     public Set<String> getVariableNames() {
-        Set<String> variables = new HashSet<String>();
+        Set<String> variables = new HashSet<>();
         for (Token t: tokens) {
             if (t.getType() == Token.TOKEN_VARIABLE)
                 variables.add(((VariableToken)t).getName());
@@ -166,7 +166,7 @@ public class Expression {
     }
 
     public Future<Double> evaluateAsync(ExecutorService executor) {
-        return executor.submit(new Callable<Double>() {
+        return executor.submit(new Callable<>() {
             @Override
             public Double call() {
                 return evaluate();

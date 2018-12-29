@@ -48,9 +48,9 @@ public class ExpressionBuilder {
             throw new IllegalArgumentException("Expression can not be empty");
         }
         this.expression = expression;
-        this.userOperators = new HashMap<String, Operator>(4);
-        this.userFunctions = new HashMap<String, Function>(4);
-        this.variableNames = new HashSet<String>(4);
+        this.userOperators = new HashMap<>(4);
+        this.userFunctions = new HashMap<>(4);
+        this.variableNames = new HashSet<>(4);
     }
 
     /**
@@ -102,7 +102,7 @@ public class ExpressionBuilder {
      * @param variableNames the variables used in the expression
      * @return the ExpressionBuilder instance
      */
-    public ExpressionBuilder variables(String ... variableNames) {
+    public ExpressionBuilder variables(String... variableNames) {
         Collections.addAll(this.variableNames, variableNames);
         return this;
     }
