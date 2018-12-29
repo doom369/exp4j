@@ -15,23 +15,25 @@
 */
 package net.objecthunter.exp4j;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import net.objecthunter.exp4j.function.Functions;
 import net.objecthunter.exp4j.operator.Operator;
 import net.objecthunter.exp4j.operator.Operators;
-import net.objecthunter.exp4j.tokenizer.*;
-
+import net.objecthunter.exp4j.tokenizer.FunctionToken;
+import net.objecthunter.exp4j.tokenizer.NumberToken;
+import net.objecthunter.exp4j.tokenizer.OperatorToken;
+import net.objecthunter.exp4j.tokenizer.Token;
+import net.objecthunter.exp4j.tokenizer.VariableToken;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import static org.junit.Assert.assertEquals;
+
 
 public class ExpressionTest {
+
     @Test
     public void testExpression1() {
         Token[] tokens = new Token[] {
@@ -119,43 +121,43 @@ public class ExpressionTest {
         e = new ExpressionBuilder("3!")
                 .operator(factorial)
                 .build();
-        assertTrue(e.validate().isValid());
+        e.validateExpression();
         assertEquals(6, e.evaluate(), 0);
 
         e = new ExpressionBuilder("3!!")
                 .operator(factorial)
                 .build();
-        assertTrue(e.validate().isValid());
+        e.validateExpression();
         assertEquals(720, e.evaluate(), 0);
 
         e = new ExpressionBuilder("4 + 3!")
                 .operator(factorial)
                 .build();
-        assertTrue(e.validate().isValid());
+        e.validateExpression();
         assertEquals(10, e.evaluate(), 0);
 
         e = new ExpressionBuilder("3! * 2")
                 .operator(factorial)
                 .build();
-        assertTrue(e.validate().isValid());
+        e.validateExpression();
         assertEquals(12, e.evaluate(), 0);
 
         e = new ExpressionBuilder("2 * 3!")
                 .operator(factorial)
                 .build();
-        assertTrue(e.validate().isValid());
+        e.validateExpression();
         assertEquals(12, e.evaluate(), 0);
 
         e = new ExpressionBuilder("4 + (3!)")
                 .operator(factorial)
                 .build();
-        assertTrue(e.validate().isValid());
+        e.validateExpression();
         assertEquals(10, e.evaluate(), 0);
 
         e = new ExpressionBuilder("4 + 3! + 2 * 6")
                 .operator(factorial)
                 .build();
-        assertTrue(e.validate().isValid());
+        e.validateExpression();
         assertEquals(22, e.evaluate(), 0);
     }
 
@@ -197,7 +199,7 @@ public class ExpressionTest {
         };
 
         Expression e = new ExpressionBuilder("!3").build();
-        assertFalse(e.validate().isValid());
+        e.validateExpression();
     }
 
     @Test (expected = IllegalArgumentException.class)
@@ -222,7 +224,7 @@ public class ExpressionTest {
         };
 
         Expression e = new ExpressionBuilder("!!3").build();
-        assertFalse(e.validate().isValid());
+        e.validateExpression();
     }
 
     @Test

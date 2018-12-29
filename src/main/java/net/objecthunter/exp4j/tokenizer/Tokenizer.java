@@ -18,6 +18,7 @@ package net.objecthunter.exp4j.tokenizer;
 import java.util.Map;
 import java.util.Set;
 
+import net.objecthunter.exp4j.exceptions.UnknownFunctionOrVariableException;
 import net.objecthunter.exp4j.function.Function;
 import net.objecthunter.exp4j.function.Functions;
 import net.objecthunter.exp4j.operator.Operator;

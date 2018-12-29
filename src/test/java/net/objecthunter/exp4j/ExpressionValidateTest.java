@@ -15,6 +15,8 @@
  */
 package net.objecthunter.exp4j;
 
+import net.objecthunter.exp4j.exceptions.ParseExpressionException;
+import net.objecthunter.exp4j.exceptions.VariableNotSetException;
 import net.objecthunter.exp4j.function.Function;
 
 import org.junit.Assert;
@@ -67,219 +69,196 @@ public class ExpressionValidateTest {
 	// valid scenarios
 
 	@Test
-	public void testValidateNumber() throws Exception {
+	public void testValidateNumber() {
 		Expression exp = new ExpressionBuilder("1")
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertTrue(result.isValid());
+		exp.validateExpression();
 	}
 
 	@Test
-	public void testValidateNumberPositive() throws Exception {
+	public void testValidateNumberPositive() {
 		Expression exp = new ExpressionBuilder("+1")
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertTrue(result.isValid());
+		exp.validateExpression();
 	}
 
 	@Test
-	public void testValidateNumberNegative() throws Exception {
+	public void testValidateNumberNegative() {
 		Expression exp = new ExpressionBuilder("-1")
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertTrue(result.isValid());
+		exp.validateExpression();
 	}
 
 	@Test
-	public void testValidateOperator() throws Exception {
+	public void testValidateOperator() {
 		Expression exp = new ExpressionBuilder("x + 1 + 2")
 			.variable("x")
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertTrue(result.isValid());
+		exp.validateExpression();
 	}
 
 	@Test
-	public void testValidateFunction() throws Exception {
+	public void testValidateFunction() {
 		Expression exp = new ExpressionBuilder("sin(x)")
 			.variable("x")
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertTrue(result.isValid());
+		exp.validateExpression();
 	}
 
 	@Test
-	public void testValidateFunctionPositive() throws Exception {
+	public void testValidateFunctionPositive() {
 		Expression exp = new ExpressionBuilder("+sin(x)")
 			.variable("x")
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertTrue(result.isValid());
+		exp.validateExpression();
 	}
 
 	@Test
-	public void testValidateFunctionNegative() throws Exception {
+	public void testValidateFunctionNegative() {
 		Expression exp = new ExpressionBuilder("-sin(x)")
 			.variable("x")
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertTrue(result.isValid());
+		exp.validateExpression();
 	}
 
 	@Test
-	public void testValidateFunctionAndOperator() throws Exception {
+	public void testValidateFunctionAndOperator() {
 		Expression exp = new ExpressionBuilder("sin(x + 1 + 2)")
 			.variable("x")
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertTrue(result.isValid());
+		exp.validateExpression();
 	}
 
 	@Test
-	public void testValidateFunctionWithTwoArguments() throws Exception {
+	public void testValidateFunctionWithTwoArguments() {
 		Expression exp = new ExpressionBuilder("beta(x, y)")
 			.variables("x", "y")
 			.functions(beta)
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertTrue(result.isValid());
+		exp.validateExpression();
 	}
 
 	@Test
-	public void testValidateFunctionWithTwoArgumentsAndOperator() throws Exception {
+	public void testValidateFunctionWithTwoArgumentsAndOperator() {
 		Expression exp = new ExpressionBuilder("beta(x, y + 1)")
 			.variables("x", "y")
 			.functions(beta)
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertTrue(result.isValid());
+		exp.validateExpression();
 	}
 
 	@Test
-	public void testValidateFunctionWithThreeArguments() throws Exception {
+	public void testValidateFunctionWithThreeArguments() {
 		Expression exp = new ExpressionBuilder("gamma(x, y, z)")
 			.variables("x", "y", "z")
 			.functions(gamma)
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertTrue(result.isValid());
+		exp.validateExpression();
 	}
 
 	@Test
-	public void testValidateFunctionWithThreeArgumentsAndOperator() throws Exception {
+	public void testValidateFunctionWithThreeArgumentsAndOperator() {
 		Expression exp = new ExpressionBuilder("gamma(x, y, z + 1)")
 			.variables("x", "y", "z")
 			.functions(gamma)
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertTrue(result.isValid());
+		exp.validateExpression();
 	}
 
 	@Test
-	public void testValidateFunctionWithTwoAndThreeArguments() throws Exception {
+	public void testValidateFunctionWithTwoAndThreeArguments() {
 		Expression exp = new ExpressionBuilder("gamma(x, beta(y, h), z)")
 			.variables("x", "y", "z", "h")
 			.functions(gamma, beta)
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertTrue(result.isValid());
+		exp.validateExpression();
 	}
 
 	@Test
-	public void testValidateFunctionWithTwoAndThreeArgumentsAndOperator() throws Exception {
+	public void testValidateFunctionWithTwoAndThreeArgumentsAndOperator() {
 		Expression exp = new ExpressionBuilder("gamma(x, beta(y, h), z + 1)")
 			.variables("x", "y", "z", "h")
 			.functions(gamma, beta)
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertTrue(result.isValid());
+		exp.validateExpression();
 	}
 
 	@Test
-	public void testValidateFunctionWithTwoAndThreeArgumentsAndMultipleOperator() throws Exception {
+	public void testValidateFunctionWithTwoAndThreeArgumentsAndMultipleOperator() {
 		Expression exp = new ExpressionBuilder("gamma(x * 2 / 4, beta(y, h + 1 + 2), z + 1 + 2 + 3 + 4)")
 			.variables("x", "y", "z", "h")
 			.functions(gamma, beta)
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertTrue(result.isValid());
+		exp.validateExpression();
 	}
 
 	@Test
-	public void testValidateFunctionWithSevenArguments() throws Exception {
+	public void testValidateFunctionWithSevenArguments() {
 		Expression exp = new ExpressionBuilder("eta(1, 2, 3, 4, 5, 6, 7)")
 			.functions(eta)
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertTrue(result.isValid());
+		exp.validateExpression();
 	}
 
 	@Test
-	public void testValidateFunctionWithSevenArgumentsAndoperator() throws Exception {
+	public void testValidateFunctionWithSevenArgumentsAndoperator() {
 		Expression exp = new ExpressionBuilder("eta(1, 2, 3, 4, 5, 6, 7) * 2 * 3 * 4")
 			.functions(eta)
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertTrue(result.isValid());
+		exp.validateExpression();
 	}
 
 	// invalid scenarios
 
-	@Test
-	public void testValidateInvalidFunction() throws Exception {
+	@Test(expected = ParseExpressionException.class)
+	public void testValidateInvalidFunction() {
 		Expression exp = new ExpressionBuilder("sin()")
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertFalse(result.isValid());
+		exp.validateExpression();
 	}
 
-	@Test
-	public void testValidateInvalidOperand() throws Exception {
+	@Test(expected = ParseExpressionException.class)
+	public void testValidateInvalidOperand() {
 		Expression exp = new ExpressionBuilder("1 + ")
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertFalse(result.isValid());
+		exp.validateExpression();
 	}
 
-	@Test
-	public void testValidateInvalidFunctionWithTooFewArguments() throws Exception {
+	@Test(expected = ParseExpressionException.class)
+	public void testValidateInvalidFunctionWithTooFewArguments() {
 		Expression exp = new ExpressionBuilder("beta(1)")
 			.functions(beta)
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertFalse(result.isValid());
+		exp.validateExpression();
 	}
 
-	@Test
-	public void testValidateInvalidFunctionWithTooFewArgumentsAndOperands() throws Exception {
+	@Test(expected = ParseExpressionException.class)
+	public void testValidateInvalidFunctionWithTooFewArgumentsAndOperands() {
 		Expression exp = new ExpressionBuilder("beta(1 + )")
 			.functions(beta)
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertFalse(result.isValid());
+		exp.validateExpression();
 	}
 
-	@Test
-	public void testValidateInvalidFunctionWithManyArguments() throws Exception {
+	@Test(expected = ParseExpressionException.class)
+	public void testValidateInvalidFunctionWithManyArguments() {
 		Expression exp = new ExpressionBuilder("beta(1, 2, 3)")
 			.functions(beta)
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertFalse(result.isValid());
+		exp.validateExpression();
 	}
 
-	@Test
-	public void testValidateInvalidOperator() throws Exception {
+	@Test(expected = ParseExpressionException.class)
+	public void testValidateInvalidOperator() {
 		Expression exp = new ExpressionBuilder("+")
 			.build();
-		ValidationResult result = exp.validate(false);
-		Assert.assertFalse(result.isValid());
+		exp.validateExpression();
 	}
 
 	// Thanks go out to werwiesel for reporting the issue
 	// https://github.com/fasseg/exp4j/issues/59
 	@Test
-	public void testNoArgFunctionValidation() throws Exception {
+	public void testNoArgFunctionValidation() {
 		Function now = new Function("now", 0) {
 			@Override
 			public double apply(double... args) {
@@ -289,22 +268,22 @@ public class ExpressionValidateTest {
 		Expression e = new ExpressionBuilder("14*now()")
 				.function(now)
 				.build();
-		assertTrue(e.validate().isValid());
+		e.validateExpression();
 
 		e = new ExpressionBuilder("now()")
 				.function(now)
 				.build();
-		assertTrue(e.validate().isValid());
+		e.validateExpression();
 
 		e = new ExpressionBuilder("sin(now())")
 				.function(now)
 				.build();
-		assertTrue(e.validate().isValid());
+		e.validateExpression();
 
 		e = new ExpressionBuilder("sin(now()) % 14")
 				.function(now)
 				.build();
-		assertTrue(e.validate().isValid());
+		e.validateExpression();
 	}
 
 }

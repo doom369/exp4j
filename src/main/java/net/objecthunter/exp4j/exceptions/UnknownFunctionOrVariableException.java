@@ -1,4 +1,6 @@
-package net.objecthunter.exp4j.tokenizer;
+package net.objecthunter.exp4j.exceptions;
+
+import net.objecthunter.exp4j.tokenizer.Tokenizer;
 
 /**
  * This exception is being thrown whenever {@link Tokenizer} finds unknown function or variable.

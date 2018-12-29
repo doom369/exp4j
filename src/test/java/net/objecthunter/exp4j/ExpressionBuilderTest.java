@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import net.objecthunter.exp4j.exceptions.ParseExpressionException;
 import net.objecthunter.exp4j.exceptions.VariableNotSetException;
 import net.objecthunter.exp4j.function.Function;
 import net.objecthunter.exp4j.operator.Operator;
@@ -154,12 +155,11 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testExpressionBuilder9() {
-        ValidationResult res = new ExpressionBuilder("x")
+        new ExpressionBuilder("x")
                 .variables("x")
                 .build()
                 .setVariable("x", 1d)
                 .validate();
-        assertTrue(res.isValid());
     }
 
     @Test
@@ -219,37 +219,28 @@ public class ExpressionBuilderTest {
                 .evaluate();
     }
 
-    @Test
+    @Test(expected = ParseExpressionException.class)
     public void testExpressionBuilder17() {
         Expression e = new ExpressionBuilder("x-y*")
                 .variables("x", "y")
                 .build();
-        ValidationResult res = e.validate(false);
-        assertFalse(res.isValid());
-        assertEquals(1,res.getErrors().size());
-        assertEquals("Too many operators", res.getErrors().get(0));
+        e.validateExpression();
     }
 
-    @Test
+    @Test(expected = ParseExpressionException.class)
     public void testExpressionBuilder18() {
         Expression e = new ExpressionBuilder("log(x) - y *")
                 .variables("x", "y")
                 .build();
-        ValidationResult res = e.validate(false);
-        assertFalse(res.isValid());
-        assertEquals(1,res.getErrors().size());
-        assertEquals("Too many operators", res.getErrors().get(0));
+        e.validateExpression();
     }
 
-    @Test
+    @Test(expected = ParseExpressionException.class)
     public void testExpressionBuilder19() {
         Expression e = new ExpressionBuilder("x - y *")
                 .variables("x", "y")
                 .build();
-        ValidationResult res = e.validate(false);
-        assertFalse(res.isValid());
-        assertEquals(1,res.getErrors().size());
-        assertEquals("Too many operators", res.getErrors().get(0));
+        e.validateExpression();
     }
 
     /* legacy tests from earlier exp4j versions */
@@ -960,9 +951,7 @@ public class ExpressionBuilderTest {
                 .function(custom)
                 .build()
                 .setVariable("bar", varBar);
-        ValidationResult res = e.validate();
-        assertFalse(res.isValid());
-        assertEquals(1, res.getErrors().size());
+        e.validate();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -1484,9 +1473,9 @@ public class ExpressionBuilderTest {
         String expr = "14 * 2x";
         Expression exp = new ExpressionBuilder(expr)
                 .variables("x")
-                .build();
-        exp.setVariable("x", 1.5d);
-        assertTrue(exp.validate().isValid());
+                .build()
+                .setVariable("x", 1.5d)
+                .validate();
         assertEquals(14d * 2d * 1.5d, exp.evaluate(), 0d);
     }
 
@@ -1694,9 +1683,7 @@ public class ExpressionBuilderTest {
                 .variable("x")
                 .build();
 
-        ValidationResult res = e.validate(false);
-        assertTrue(res.isValid());
-        assertNull(res.getErrors());
+        e.validateExpression();
     }
 
     // Thanks go out to Johan Björk for reporting the division by zero problem EXP-22

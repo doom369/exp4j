@@ -15,6 +15,7 @@
  */
 package net.objecthunter.exp4j;
 
+import net.objecthunter.exp4j.exceptions.ParseExpressionException;
 import net.objecthunter.exp4j.exceptions.VariableNotSetException;
 import net.objecthunter.exp4j.function.Function;
 import net.objecthunter.exp4j.function.Functions;
@@ -25,12 +26,10 @@ import net.objecthunter.exp4j.tokenizer.OperatorToken;
 import net.objecthunter.exp4j.tokenizer.Token;
 import net.objecthunter.exp4j.tokenizer.VariableToken;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -117,12 +116,7 @@ public class Expression {
         }
     }
 
-    public ValidationResult validate(boolean checkVariablesSet) {
-        List<String> errors = new ArrayList<String>(0);
-        if (checkVariablesSet) {
-            validateVariables();
-        }
-
+    public void validateExpression() {
         /* Check if the number of operands, functions and operators match.
            The idea is to increment a counter for operands and decrease it for operators.
            When a function occurs the number of available arguments has to be greater
@@ -140,7 +134,7 @@ public class Expression {
                     final Function func = ((FunctionToken) tok).getFunction();
                     final int argsNum = func.getNumArguments(); 
                     if (argsNum > count) {
-                        errors.add("Not enough arguments for '" + func.getName() + "'");
+                        throw new ParseExpressionException("Not enough arguments for '" + func.getName() + "'");
                     }
                     if (argsNum > 1) {
                         count -= argsNum - 1;
@@ -157,19 +151,18 @@ public class Expression {
                     break;
             }
             if (count < 1) {
-                errors.add("Too many operators");
-                return new ValidationResult(false, errors);
+                throw new ParseExpressionException("Too many operators");
             }
         }
         if (count > 1) {
-            errors.add("Too many operands");
+            throw new ParseExpressionException("Too many operands");
         }
-        return errors.size() == 0 ? ValidationResult.SUCCESS : new ValidationResult(false, errors);
-
     }
 
-    public ValidationResult validate() {
-        return validate(true);
+    public Expression validate() {
+        validateVariables();
+        validateExpression();
+        return this;
     }
 
     public Future<Double> evaluateAsync(ExecutorService executor) {
