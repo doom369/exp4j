@@ -25,7 +25,7 @@ import org.junit.Test;
 
 public class PerformanceTest {
 
-    private static final long BENCH_TIME = 2l;
+    private static final long BENCH_TIME = 2;
     private static final String EXPRESSION = "log(x) - y * (sqrt(x^cos(y)))";
 
     @Test

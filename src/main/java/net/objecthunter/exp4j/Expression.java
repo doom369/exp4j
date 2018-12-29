@@ -32,7 +32,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -46,7 +45,7 @@ public class Expression {
     private final Set<String> userFunctionNames;
 
     private static Map<String, Double> createDefaultVariables() {
-        final Map<String, Double> vars = new HashMap<String, Double>(4);
+        Map<String, Double> vars = new HashMap<String, Double>(4);
         vars.put("pi", Math.PI);
         vars.put("π", Math.PI);
         vars.put("φ", 1.61803398874d);
@@ -69,7 +68,7 @@ public class Expression {
     Expression(final Token[] tokens) {
         this.tokens = tokens;
         this.variables = createDefaultVariables();
-        this.userFunctionNames = Collections.<String>emptySet();
+        this.userFunctionNames = Collections.emptySet();
     }
 
     Expression(final Token[] tokens, Set<String> userFunctionNames) {
@@ -80,7 +79,7 @@ public class Expression {
 
     public Expression setVariable(final String name, final double value) {
         this.checkVariableName(name);
-        this.variables.put(name, Double.valueOf(value));
+        this.variables.put(name, value);
         return this;
     }
 
@@ -98,8 +97,8 @@ public class Expression {
     }
 
     public Set<String> getVariableNames() {
-        final Set<String> variables = new HashSet<String>();
-        for (final Token t: tokens) {
+        Set<String> variables = new HashSet<String>();
+        for (Token t: tokens) {
             if (t.getType() == Token.TOKEN_VARIABLE)
                 variables.add(((VariableToken)t).getName());
         }
@@ -107,12 +106,12 @@ public class Expression {
     }
 
     public ValidationResult validate(boolean checkVariablesSet) {
-        final List<String> errors = new ArrayList<String>(0);
+        List<String> errors = new ArrayList<String>(0);
         if (checkVariablesSet) {
             /* check that all vars have a value set */
-            for (final Token t : this.tokens) {
+            for (Token t : this.tokens) {
                 if (t.getType() == Token.TOKEN_VARIABLE) {
-                    final String var = ((VariableToken) t).getName();
+                    String var = ((VariableToken) t).getName();
                     if (!variables.containsKey(var)) {
                         errors.add("The setVariable '" + var + "' has not been set");
                     }
@@ -172,7 +171,7 @@ public class Expression {
     public Future<Double> evaluateAsync(ExecutorService executor) {
         return executor.submit(new Callable<Double>() {
             @Override
-            public Double call() throws Exception {
+            public Double call() {
                 return evaluate();
             }
         });
@@ -180,8 +179,7 @@ public class Expression {
 
     public double evaluate() {
         final ArrayStack output = new ArrayStack();
-        for (int i = 0; i < tokens.length; i++) {
-            Token t = tokens[i];
+        for (Token t : tokens) {
             if (t.getType() == Token.TOKEN_NUMBER) {
                 output.push(((NumberToken) t).getValue());
             } else if (t.getType() == Token.TOKEN_VARIABLE) {

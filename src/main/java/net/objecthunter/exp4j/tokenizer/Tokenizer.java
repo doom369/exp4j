@@ -86,7 +86,7 @@ public class Tokenizer {
             }
             return parseNumberToken(ch);
         } else if (isArgumentSeparator(ch)) {
-            return parseArgumentSeparatorToken(ch);
+            return parseArgumentSeparatorToken();
         } else if (isOpenParentheses(ch)) {
             if (lastToken != null && implicitMultiplication &&
                     (lastToken.getType() != Token.TOKEN_OPERATOR
@@ -119,7 +119,7 @@ public class Tokenizer {
         throw new IllegalArgumentException("Unable to parse char '" + ch + "' (Code:" + (int) ch + ") at [" + pos + "]");
     }
 
-    private Token parseArgumentSeparatorToken(char ch) {
+    private Token parseArgumentSeparatorToken() {
         this.pos++;
         this.lastToken = new ArgumentSeparatorToken();
         return lastToken;
@@ -273,11 +273,11 @@ public class Tokenizer {
                 (lastCharE && (ch == '-' || ch == '+'));
     }
 
-    public static boolean isAlphabetic(int codePoint) {
+    private static boolean isAlphabetic(int codePoint) {
         return Character.isLetter(codePoint);
     }
 
-    public static boolean isVariableOrFunctionCharacter(int codePoint) {
+    private static boolean isVariableOrFunctionCharacter(int codePoint) {
         return isAlphabetic(codePoint) ||
                 Character.isDigit(codePoint) ||
                 codePoint == '_' ||

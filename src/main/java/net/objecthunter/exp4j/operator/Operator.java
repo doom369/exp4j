@@ -55,12 +55,12 @@ public abstract class Operator {
     /**
      * The set of allowed operator chars
      */
-    public static final char[] ALLOWED_OPERATOR_CHARS = { '+', '-', '*', '/', '%', '^', '!', '#','§', '$', '&', ';', ':', '~', '<', '>', '|', '='};
+    private static final char[] ALLOWED_OPERATOR_CHARS = { '+', '-', '*', '/', '%', '^', '!', '#','§', '$', '&', ';', ':', '~', '<', '>', '|', '='};
 
-    protected final int numOperands;
-    protected final boolean leftAssociative;
-    protected final String symbol;
-    protected final int precedence;
+    private final int numOperands;
+    private final boolean leftAssociative;
+    private final String symbol;
+    private final int precedence;
 
     /**
      * Create a new operator for use in expressions
