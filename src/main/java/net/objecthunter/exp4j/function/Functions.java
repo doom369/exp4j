@@ -135,13 +135,13 @@ public enum Functions {
             return Math.pow(args[0], args[1]);
         }
     }),
-    EXP(new Function("exp", 1) {
+    EXP(new Function("exp") {
         @Override
         public double apply(double... args) {
             return Math.exp(args[0]);
         }
     }),
-    EXPM1(new Function("expm1", 1) {
+    EXPM1(new Function("expm1") {
         @Override
         public double apply(double... args) {
             return Math.expm1(args[0]);
@@ -159,7 +159,7 @@ public enum Functions {
             return Math.log(args[0]) / Math.log(2d);
         }
     }),
-    SIGNUM(new Function("signum", 1) {
+    SIGNUM(new Function("signum") {
         @Override
         public double apply(double... args) {
             if (args[0] > 0) {
