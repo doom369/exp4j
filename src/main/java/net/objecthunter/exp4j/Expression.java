@@ -174,49 +174,71 @@ public class Expression {
         return output.pop();
     }
 
-    private void processToken(Token t, ArrayStack output) {
-        int tokenType = t.getType();
+    private void processToken(Token token, ArrayStack output) {
+        Double value = processToken(token, output, this.variables);
+        if (value != null) {
+            output.push(value);
+        }
+    }
+
+    private static Double processToken(Token token, ArrayStack output, Map<String, Double> variables) {
+        int tokenType = token.getType();
         switch (tokenType) {
             case Token.TOKEN_NUMBER :
-                output.push(((NumberToken) t).getValue());
-                break;
+                return processTokenNumber(token);
             case Token.TOKEN_VARIABLE :
-                final String name = ((VariableToken) t).getName();
-                final Double value = this.variables.get(name);
-                if (value == null) {
-                    throw new IllegalArgumentException("No value has been set for the setVariable '" + name + "'.");
-                }
-                output.push(value);
-                break;
+                return processTokenVariable(token, variables);
             case Token.TOKEN_OPERATOR :
-                OperatorToken op = (OperatorToken) t;
-                if (output.size() < op.getOperator().getNumOperands()) {
-                    throw new IllegalArgumentException("Invalid number of operands available for '" + op.getOperator().getSymbol() + "' operator");
-                }
-                if (op.getOperator().getNumOperands() == 2) {
-                    /* pop the operands and push the result of the operation */
-                    double rightArg = output.pop();
-                    double leftArg = output.pop();
-                    output.push(op.getOperator().apply(leftArg, rightArg));
-                } else if (op.getOperator().getNumOperands() == 1) {
-                    /* pop the operand and push the result of the operation */
-                    double arg = output.pop();
-                    output.push(op.getOperator().apply(arg));
-                }
-                break;
+                return processTokenOperator(token, output);
             case Token.TOKEN_FUNCTION :
-                FunctionToken func = (FunctionToken) t;
-                final int numArguments = func.getFunction().getNumArguments();
-                if (output.size() < numArguments) {
-                    throw new IllegalArgumentException("Invalid number of arguments available for '" + func.getFunction().getName() + "' function");
-                }
-                /* collect the arguments from the stack */
-                double[] args = new double[numArguments];
-                for (int j = numArguments - 1; j >= 0; j--) {
-                    args[j] = output.pop();
-                }
-                output.push(func.getFunction().apply(args));
-                break;
+                return processFunction(token, output);
+            default :
+                return null;
         }
+    }
+
+    private static Double processFunction(Token token, ArrayStack output) {
+        FunctionToken func = (FunctionToken) token;
+        int numArguments = func.getFunction().getNumArguments();
+        if (output.size() < numArguments) {
+            throw new IllegalArgumentException("Invalid number of arguments available for '" + func.getFunction().getName() + "' function");
+        }
+        /* collect the arguments from the stack */
+        double[] args = new double[numArguments];
+        for (int j = numArguments - 1; j >= 0; j--) {
+            args[j] = output.pop();
+        }
+        return func.getFunction().apply(args);
+    }
+
+    private static Double processTokenOperator(Token token, ArrayStack output) {
+        OperatorToken op = (OperatorToken) token;
+        if (output.size() < op.getOperator().getNumOperands()) {
+            throw new IllegalArgumentException("Invalid number of operands available for '" + op.getOperator().getSymbol() + "' operator");
+        }
+        if (op.getOperator().getNumOperands() == 2) {
+            /* pop the operands and push the result of the operation */
+            double rightArg = output.pop();
+            double leftArg = output.pop();
+            return op.getOperator().apply(leftArg, rightArg);
+        } else if (op.getOperator().getNumOperands() == 1) {
+            /* pop the operand and push the result of the operation */
+            double arg = output.pop();
+            return op.getOperator().apply(arg);
+        }
+        return null;
+    }
+
+    private static Double processTokenNumber(Token token) {
+        return ((NumberToken) token).getValue();
+    }
+
+    private static Double processTokenVariable(Token token, Map<String, Double> variables) {
+        String name = ((VariableToken) token).getName();
+        Double value = variables.get(name);
+        if (value == null) {
+            throw new IllegalArgumentException("No value has been set for the setVariable '" + name + "'.");
+        }
+        return value;
     }
 }
