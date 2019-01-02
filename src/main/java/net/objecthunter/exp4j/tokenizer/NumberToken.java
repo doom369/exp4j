@@ -15,6 +15,10 @@
 */
 package net.objecthunter.exp4j.tokenizer;
 
+import net.objecthunter.exp4j.ArrayStack;
+
+import java.util.Map;
+
 /**
  * Represents a number in the expression
  */
@@ -41,5 +45,10 @@ public final class NumberToken extends Token {
      */
     public double getValue() {
         return value;
+    }
+
+    @Override
+    public void process(ArrayStack output, Map<String, Double> variables) {
+        output.push(value);
     }
 }

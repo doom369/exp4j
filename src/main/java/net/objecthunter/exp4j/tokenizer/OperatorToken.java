@@ -15,7 +15,10 @@
 */
 package net.objecthunter.exp4j.tokenizer;
 
+import net.objecthunter.exp4j.ArrayStack;
 import net.objecthunter.exp4j.operator.Operator;
+
+import java.util.Map;
 
 /**
  * Represents an operator used in expressions
@@ -42,5 +45,22 @@ public class OperatorToken extends Token {
      */
     public Operator getOperator() {
         return operator;
+    }
+
+    @Override
+    public void process(ArrayStack output, Map<String, Double> variables) {
+        if (output.size() < operator.getNumOperands()) {
+            throw new IllegalArgumentException("Invalid number of operands available for '" + operator.getSymbol() + "' operator");
+        }
+        if (operator.getNumOperands() == 2) {
+            /* pop the operands and push the result of the operation */
+            double rightArg = output.pop();
+            double leftArg = output.pop();
+            output.push(operator.apply(leftArg, rightArg));
+        } else if (operator.getNumOperands() == 1) {
+            /* pop the operand and push the result of the operation */
+            double arg = output.pop();
+            output.push(operator.apply(arg));
+        }
     }
 }

@@ -15,6 +15,10 @@
 */
 package net.objecthunter.exp4j.tokenizer;
 
+import net.objecthunter.exp4j.ArrayStack;
+
+import java.util.Map;
+
 /**
  * Abstract class for tokens used by exp4j to tokenize expressions
  */
@@ -36,6 +40,9 @@ public abstract class Token {
 
     public int getType() {
         return type;
+    }
+
+    public void process(ArrayStack output, Map<String, Double> variables) {
     }
 
 }

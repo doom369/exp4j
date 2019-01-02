@@ -15,6 +15,10 @@
  */
 package net.objecthunter.exp4j.tokenizer;
 
+import net.objecthunter.exp4j.ArrayStack;
+
+import java.util.Map;
+
 /**
  * represents a setVariable used in an expression
  */
@@ -37,5 +41,14 @@ public class VariableToken extends Token {
     public VariableToken(String name) {
         super(TOKEN_VARIABLE);
         this.name = name;
+    }
+
+    @Override
+    public void process(ArrayStack output, Map<String, Double> variables) {
+        Double value = variables.get(name);
+        if (value == null) {
+            throw new IllegalArgumentException("No value has been set for the setVariable '" + name + "'.");
+        }
+        output.push(value);
     }
 }

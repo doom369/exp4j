@@ -15,7 +15,10 @@
  */
 package net.objecthunter.exp4j.tokenizer;
 
+import net.objecthunter.exp4j.ArrayStack;
 import net.objecthunter.exp4j.function.Function;
+
+import java.util.Map;
 
 public class FunctionToken extends Token {
 
@@ -28,5 +31,19 @@ public class FunctionToken extends Token {
 
     public Function getFunction() {
         return function;
+    }
+
+    @Override
+    public void process(ArrayStack output, Map<String, Double> variables) {
+        int numArguments = function.getNumArguments();
+        if (output.size() < numArguments) {
+            throw new IllegalArgumentException("Invalid number of arguments available for '" + function.getName() + "' function");
+        }
+        /* collect the arguments from the stack */
+        double[] args = new double[numArguments];
+        for (int j = numArguments - 1; j >= 0; j--) {
+            args[j] = output.pop();
+        }
+        output.push(function.apply(args));
     }
 }
