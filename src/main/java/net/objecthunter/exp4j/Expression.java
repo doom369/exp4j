@@ -18,10 +18,8 @@ package net.objecthunter.exp4j;
 import net.objecthunter.exp4j.exceptions.ParseExpressionException;
 import net.objecthunter.exp4j.exceptions.VariableNotSetException;
 import net.objecthunter.exp4j.function.Function;
-import net.objecthunter.exp4j.function.Functions;
 import net.objecthunter.exp4j.operator.Operator;
 import net.objecthunter.exp4j.tokenizer.FunctionToken;
-import net.objecthunter.exp4j.tokenizer.NumberToken;
 import net.objecthunter.exp4j.tokenizer.OperatorToken;
 import net.objecthunter.exp4j.tokenizer.Token;
 import net.objecthunter.exp4j.tokenizer.VariableToken;
@@ -32,7 +30,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -73,7 +70,7 @@ public class Expression {
     }
 
     private void checkVariableName(String name) {
-        if (this.userFunctionNames.contains(name) || Functions.isBuiltinFunction(name)) {
+        if (this.userFunctionNames.contains(name)) {
             throw new IllegalArgumentException("The variable name '" + name + "' is invalid. Since there exists a function with the same name");
         }
     }
@@ -87,9 +84,9 @@ public class Expression {
 
     public Set<String> getVariableNames() {
         Set<String> variables = new HashSet<>();
-        for (Token t: tokens) {
-            if (t.getType() == Token.TOKEN_VARIABLE)
-                variables.add(((VariableToken)t).getName());
+        for (Token token : tokens) {
+            if (token.getType() == Token.TOKEN_VARIABLE)
+                variables.add(((VariableToken) token).getName());
         }
         return variables;
     }
@@ -155,12 +152,7 @@ public class Expression {
     }
 
     public Future<Double> evaluateAsync(ExecutorService executor) {
-        return executor.submit(new Callable<>() {
-            @Override
-            public Double call() {
-                return evaluate();
-            }
-        });
+        return executor.submit(this::evaluate);
     }
 
     public double evaluate() {
