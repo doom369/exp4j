@@ -27,6 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import net.objecthunter.exp4j.exceptions.ParseExpressionException;
+import net.objecthunter.exp4j.exceptions.UnknownFunctionOrVariableException;
 import net.objecthunter.exp4j.exceptions.VariableNotSetException;
 import net.objecthunter.exp4j.function.Function;
 import net.objecthunter.exp4j.operator.Operator;
@@ -1562,6 +1563,12 @@ public class ExpressionBuilderTest {
         double expected = 2*Math.PI + Math.E + 1.61803398874d;
         Expression e = new ExpressionBuilder(expr).withAllConstants().build();
         assertEquals(expected, e.evaluate(), 0d);
+    }
+
+    @Test(expected = UnknownFunctionOrVariableException.class)
+    public void testDocumentationExample4Fails()   {
+        String expr = "pi+π+e+φ";
+        new ExpressionBuilder(expr).build().evaluate();
     }
 
     @Test
