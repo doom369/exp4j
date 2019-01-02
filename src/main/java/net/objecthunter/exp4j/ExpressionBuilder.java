@@ -50,7 +50,7 @@ public class ExpressionBuilder {
         this.expression = expression;
         this.userOperators = new HashMap<>(4);
         this.userFunctions = new HashMap<>(4);
-        this.variableNames = new HashSet<>(4);
+        this.variableNames = new HashSet<>();
     }
 
     /**
@@ -104,6 +104,28 @@ public class ExpressionBuilder {
      */
     public ExpressionBuilder variables(String... variableNames) {
         Collections.addAll(this.variableNames, variableNames);
+        return this;
+    }
+
+    public ExpressionBuilder withPhi() {
+        return variable(Constants.PHI);
+    }
+
+    public ExpressionBuilder withE() {
+        return variable(Constants.E);
+    }
+
+    public ExpressionBuilder withPi() {
+        this.variableNames.add(Constants.PI);
+        this.variableNames.add(Constants.PI_2);
+        return this;
+    }
+
+    public ExpressionBuilder withAllConstants() {
+        this.variableNames.add(Constants.PI);
+        this.variableNames.add(Constants.PI_2);
+        this.variableNames.add(Constants.PHI);
+        this.variableNames.add(Constants.E);
         return this;
     }
 
@@ -174,19 +196,22 @@ public class ExpressionBuilder {
         if (expression.length() == 0) {
             throw new IllegalArgumentException("The expression can not be empty");
         }
-        /* set the contants' varibale names */
-        variableNames.add("pi");
-        variableNames.add("π");
-        variableNames.add("e");
-        variableNames.add("φ");
+
         /* Check if there are duplicate vars/functions */
-        for (String var : variableNames) {
-            if (Functions.getBuiltinFunction(var) != null || userFunctions.containsKey(var)) {
-                throw new IllegalArgumentException("A variable can not have the same name as a function [" + var + "]");
+        Map<String, Double> consts = new HashMap<>();
+        for (String variable : variableNames) {
+            if (Functions.getBuiltinFunction(variable) != null || userFunctions.containsKey(variable)) {
+                throw new IllegalArgumentException(
+                        "A variable can not have the same name as a function [" + variable + "]");
+            }
+            Double constantValue = Constants.ALL.get(variable);
+            if (constantValue != null) {
+                consts.put(variable, constantValue);
             }
         }
+
         return new Expression(ShuntingYard.convertToRPN(this.expression, this.userFunctions, this.userOperators,
-                this.variableNames, this.implicitMultiplication), this.userFunctions.keySet());
+                this.variableNames, this.implicitMultiplication), this.userFunctions.keySet(), consts);
     }
 
 }

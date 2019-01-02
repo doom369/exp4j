@@ -40,19 +40,10 @@ public class Expression {
 
     private final Token[] tokens;
 
-    private final Map<String, Double> variables;
+    private final Map<String, Double> variables = new HashMap<>();
 
     private final Set<String> userFunctionNames;
 
-    private static Map<String, Double> createDefaultVariables() {
-        Map<String, Double> vars = new HashMap<>(4);
-        vars.put("pi", Math.PI);
-        vars.put("π", Math.PI);
-        vars.put("φ", 1.61803398874d);
-        vars.put("e", Math.E);
-        return vars;
-    }
-    
     /**
      * Creates a new expression that is a copy of the existing one.
      * 
@@ -60,21 +51,19 @@ public class Expression {
      */
     public Expression(final Expression existing) {
     	this.tokens = Arrays.copyOf(existing.tokens, existing.tokens.length);
-    	this.variables = new HashMap<>();
     	this.variables.putAll(existing.variables);
     	this.userFunctionNames = new HashSet<>(existing.userFunctionNames);
     }
 
     Expression(final Token[] tokens) {
         this.tokens = tokens;
-        this.variables = createDefaultVariables();
         this.userFunctionNames = Collections.emptySet();
     }
 
-    Expression(final Token[] tokens, Set<String> userFunctionNames) {
+    Expression(final Token[] tokens, Set<String> userFunctionNames, Map<String, Double> consts) {
         this.tokens = tokens;
-        this.variables = createDefaultVariables();
         this.userFunctionNames = userFunctionNames;
+        this.variables.putAll(consts);
     }
 
     public Expression setVariable(final String name, final double value) {
