@@ -30,6 +30,7 @@ import net.objecthunter.exp4j.exceptions.ParseExpressionException;
 import net.objecthunter.exp4j.exceptions.UnknownFunctionOrVariableException;
 import net.objecthunter.exp4j.exceptions.VariableNotSetException;
 import net.objecthunter.exp4j.function.Function;
+import net.objecthunter.exp4j.function.Functions;
 import net.objecthunter.exp4j.operator.Operator;
 
 import org.junit.Test;
@@ -42,6 +43,38 @@ public class ExpressionBuilderTest {
                 .build()
                 .evaluate();
         assertEquals(3d, result, 0d);
+    }
+
+    @Test(expected = UnknownFunctionOrVariableException.class)
+    public void testExpressionBuilder2Fails() {
+        new ExpressionBuilder("cos(x)")
+                .variables("x")
+                .allowOnly(Functions.SIN)
+                .build()
+                .setVariable("x", Math.PI)
+                .evaluate();
+    }
+
+    @Test(expected = UnknownFunctionOrVariableException.class)
+    public void testExpressionBuilder2Fails2() {
+        new ExpressionBuilder("cos(x)")
+                .variables("x")
+                .allowOnly(Functions.SIN, Functions.ABS)
+                .build()
+                .setVariable("x", Math.PI)
+                .evaluate();
+    }
+
+    @Test
+    public void testExpressionBuilder2AllowOnly() {
+        double result = new ExpressionBuilder("cos(x)")
+                .variables("x")
+                .allowOnly(Functions.COS)
+                .build()
+                .setVariable("x", Math.PI)
+                .evaluate();
+        double expected = cos(Math.PI);
+        assertEquals(expected, result, 0d);
     }
 
     @Test

@@ -73,7 +73,7 @@ public class Expression {
     }
 
     private void checkVariableName(String name) {
-        if (this.userFunctionNames.contains(name) || Functions.getBuiltinFunction(name) != null) {
+        if (this.userFunctionNames.contains(name) || Functions.isBuiltinFunction(name)) {
             throw new IllegalArgumentException("The variable name '" + name + "' is invalid. Since there exists a function with the same name");
         }
     }

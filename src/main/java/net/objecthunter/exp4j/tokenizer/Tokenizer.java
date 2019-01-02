@@ -15,14 +15,13 @@
  */
 package net.objecthunter.exp4j.tokenizer;
 
-import java.util.Map;
-import java.util.Set;
-
 import net.objecthunter.exp4j.exceptions.UnknownFunctionOrVariableException;
 import net.objecthunter.exp4j.function.Function;
-import net.objecthunter.exp4j.function.Functions;
 import net.objecthunter.exp4j.operator.Operator;
 import net.objecthunter.exp4j.operator.Operators;
+
+import java.util.Map;
+import java.util.Set;
 
 public class Tokenizer {
 
@@ -30,7 +29,7 @@ public class Tokenizer {
 
     private final int expressionLength;
 
-    private final Map<String, Function> userFunctions;
+    private final Map<String, Function> allowedFunctions;
 
     private final Map<String, Operator> userOperators;
 
@@ -47,7 +46,7 @@ public class Tokenizer {
             Map<String, Operator> userOperators, Set<String> variableNames, boolean implicitMultiplication) {
         this.expression = expression.trim().toCharArray();
         this.expressionLength = this.expression.length;
-        this.userFunctions = userFunctions;
+        this.allowedFunctions = userFunctions;
         this.userOperators = userOperators;
         this.variableNames = variableNames;
         this.implicitMultiplication = implicitMultiplication;
@@ -57,7 +56,7 @@ public class Tokenizer {
                      Map<String, Operator> userOperators, Set<String> variableNames) {
         this.expression = expression.trim().toCharArray();
         this.expressionLength = this.expression.length;
-        this.userFunctions = userFunctions;
+        this.allowedFunctions = userFunctions;
         this.userOperators = userOperators;
         this.variableNames = variableNames;
         this.implicitMultiplication = true;
@@ -181,11 +180,8 @@ public class Tokenizer {
 
     private Function getFunction(String name) {
         Function f = null;
-        if (this.userFunctions != null) {
-            f = this.userFunctions.get(name);
-        }
-        if (f == null) {
-            f = Functions.getBuiltinFunction(name);
+        if (this.allowedFunctions != null) {
+            f = this.allowedFunctions.get(name);
         }
         return f;
     }

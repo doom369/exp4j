@@ -31,6 +31,8 @@ public class ExpressionBuilder {
 
     private final String expression;
 
+    private Map<String, Function> allowedFunctions;
+
     private final Map<String, Function> userFunctions;
 
     private final Map<String, Operator> userOperators;
@@ -48,8 +50,8 @@ public class ExpressionBuilder {
             throw new IllegalArgumentException("Expression can not be empty");
         }
         this.expression = expression;
-        this.userOperators = new HashMap<>(4);
-        this.userFunctions = new HashMap<>(4);
+        this.userOperators = new HashMap<>();
+        this.userFunctions = new HashMap<>();
         this.variableNames = new HashSet<>();
     }
 
@@ -129,6 +131,28 @@ public class ExpressionBuilder {
         return this;
     }
 
+    public ExpressionBuilder allowOnly(Functions allowedFunction) {
+        if (this.allowedFunctions == null) {
+            this.allowedFunctions = new HashMap<>();
+        }
+        addFunction(allowedFunction);
+        return this;
+    }
+
+    public ExpressionBuilder allowOnly(Functions... allowedFunctions) {
+        if (this.allowedFunctions == null) {
+            this.allowedFunctions = new HashMap<>();
+        }
+        for (Functions functions : allowedFunctions) {
+            addFunction(functions);
+        }
+        return this;
+    }
+
+    private void addFunction(Functions functions) {
+        this.allowedFunctions.put(functions.name().toLowerCase(), functions.function);
+    }
+
     /**
      * Declare a variable used in the expression
      * @param variableName the variable used in the expression
@@ -197,10 +221,13 @@ public class ExpressionBuilder {
             throw new IllegalArgumentException("The expression can not be empty");
         }
 
+        //if user didn't specified specific functions, we use all built ins
+        userFunctions.putAll(allowedFunctions == null ? Functions.ALL : allowedFunctions);
+
         /* Check if there are duplicate vars/functions */
         Map<String, Double> consts = new HashMap<>();
         for (String variable : variableNames) {
-            if (Functions.getBuiltinFunction(variable) != null || userFunctions.containsKey(variable)) {
+            if (Functions.isBuiltinFunction(variable) || userFunctions.containsKey(variable)) {
                 throw new IllegalArgumentException(
                         "A variable can not have the same name as a function [" + variable + "]");
             }

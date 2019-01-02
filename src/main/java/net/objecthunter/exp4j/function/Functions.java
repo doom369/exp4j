@@ -15,6 +15,9 @@
  */
 package net.objecthunter.exp4j.function;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Class representing the builtin functions available for use in expressions
  */
@@ -173,72 +176,19 @@ public enum Functions {
         this.function = function;
     }
 
-    private final Function function;
+    public final Function function;
 
-    /**
-     * Get the builtin function for a given name
-     * @param name te name of the function
-     * @return a Function instance
-     */
-    public static Function getBuiltinFunction(String name) {
-        Functions functions = getFunctionByName(name);
-        if (functions != null) {
-            return functions.function;
+    public static final Map<String, Function> ALL = init();
+
+    private static Map<String, Function> init() {
+        Map<String, Function> result = new HashMap<>();
+        for (Functions functions : Functions.values()) {
+            result.put(functions.name().toLowerCase(), functions.function);
         }
-        return null;
+        return result;
     }
 
-    private static Functions getFunctionByName(String name) {
-        switch (name) {
-            case "sin":
-                return SIN;
-            case "cos":
-                return COS;
-            case "tan":
-                return TAN;
-            case "cot":
-                return COT;
-            case "asin":
-                return ASIN;
-            case "acos":
-                return ACOS;
-            case "atan":
-                return ATAN;
-            case "sinh":
-                return SINH;
-            case "cosh":
-                return COSH;
-            case "tanh":
-                return TANH;
-            case "abs":
-                return ABS;
-            case "log":
-                return LOG;
-            case "log10":
-                return LOG10;
-            case "log2":
-                return LOG2;
-            case "log1p":
-                return LOG1P;
-            case "ceil":
-                return CEIL;
-            case "floor":
-                return FLOOR;
-            case "sqrt":
-                return SQRT;
-            case "cbrt":
-                return CBRT;
-            case "pow":
-                return POW;
-            case "exp":
-                return EXP;
-            case "expm1":
-                return EXPM1;
-            case "signum":
-                return SIGNUM;
-            default:
-                return null;
-        }
+    public static boolean isBuiltinFunction(String name) {
+        return ALL.get(name) != null;
     }
-
 }
