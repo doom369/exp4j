@@ -1,6 +1,6 @@
 package net.objecthunter.exp4j.function;
 
-import net.objecthunter.exp4j.ArrayStack;
+import java.util.Deque;
 
 /**
  * A class representing a Function which can be used in an expression
@@ -13,7 +13,7 @@ public abstract class PredefinedArgumentFunction extends Function {
 
     public abstract double apply(double... args);
 
-    public double apply(ArrayStack output) {
+    public double apply(Deque<Double> output) {
         /* collect the arguments from the stack */
         verify(output.size());
         double[] args = new double[numberOfArguments];

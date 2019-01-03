@@ -15,8 +15,7 @@
 */
 package net.objecthunter.exp4j.tokenizer;
 
-import net.objecthunter.exp4j.ArrayStack;
-
+import java.util.Deque;
 import java.util.Map;
 
 /**
@@ -42,7 +41,7 @@ public abstract class Token {
         return type;
     }
 
-    public void process(ArrayStack output, Map<String, Double> variables) {
+    public void process(Deque<Double> output, Map<String, Double> variables) {
     }
 
 }
