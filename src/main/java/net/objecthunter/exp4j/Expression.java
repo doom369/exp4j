@@ -17,7 +17,6 @@ package net.objecthunter.exp4j;
 
 import net.objecthunter.exp4j.exceptions.ParseExpressionException;
 import net.objecthunter.exp4j.exceptions.VariableNotSetException;
-import net.objecthunter.exp4j.function.Function;
 import net.objecthunter.exp4j.operator.Operator;
 import net.objecthunter.exp4j.tokenizer.FunctionToken;
 import net.objecthunter.exp4j.tokenizer.OperatorToken;
@@ -117,11 +116,9 @@ public class Expression {
                     count++;
                     break;
                 case Token.TOKEN_FUNCTION:
-                    final Function func = ((FunctionToken) tok).getFunction();
-                    final int argsNum = func.getNumArguments(); 
-                    if (argsNum > count) {
-                        throw new ParseExpressionException("Not enough arguments for '" + func.getName() + "'");
-                    }
+                    final FunctionToken funcToken = ((FunctionToken) tok);
+                    final int argsNum = ((FunctionToken) tok).getDynamicNumberOfArguments();
+                    funcToken.getFunction().validateArguments(argsNum);
                     if (argsNum > 1) {
                         count -= argsNum - 1;
                     } else if (argsNum == 0) {

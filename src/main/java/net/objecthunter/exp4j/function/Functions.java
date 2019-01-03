@@ -15,6 +15,8 @@
  */
 package net.objecthunter.exp4j.function;
 
+import net.objecthunter.exp4j.exceptions.VariableNotSetException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,152 +25,165 @@ import java.util.Map;
  */
 public enum Functions {
 
-    SIN(new Function("sin") {
+    SIN(new OneArgumentFunction("sin") {
         @Override
-        public double apply(double... args) {
-            return Math.sin(args[0]);
+        public double apply(double args) {
+            return Math.sin(args);
         }
     }),
-    COS(new Function("cos") {
+    COS(new OneArgumentFunction("cos") {
         @Override
-        public double apply(double... args) {
-            return Math.cos(args[0]);
+        public double apply(double arg) {
+            return Math.cos(arg);
         }
     }),
-    TAN(new Function("tan") {
+    TAN(new OneArgumentFunction("tan") {
         @Override
-        public double apply(double... args) {
-            return Math.tan(args[0]);
+        public double apply(double arg) {
+            return Math.tan(arg);
         }
     }),
-    COT(new Function("cot") {
+    COT(new OneArgumentFunction("cot") {
         @Override
-        public double apply(double... args) {
-            double tan = Math.tan(args[0]);
+        public double apply(double arg) {
+            double tan = Math.tan(arg);
             if (tan == 0d) {
                 throw new ArithmeticException("Division by zero in cotangent!");
             }
-            return 1d/Math.tan(args[0]);
+            return 1d/Math.tan(arg);
         }
     }),
-    LOG(new Function("log") {
+    LOG(new OneArgumentFunction("log") {
         @Override
-        public double apply(double... args) {
-            return Math.log(args[0]);
+        public double apply(double arg) {
+            return Math.log(arg);
         }
     }),
-    LOG1P(new Function("log1p") {
+    LOG1P(new OneArgumentFunction("log1p") {
         @Override
-        public double apply(double... args) {
-            return Math.log1p(args[0]);
+        public double apply(double arg) {
+            return Math.log1p(arg);
         }
     }),
-    ABS(new Function("abs") {
+    ABS(new OneArgumentFunction("abs") {
         @Override
-        public double apply(double... args) {
-            return Math.abs(args[0]);
+        public double apply(double arg) {
+            return Math.abs(arg);
         }
     }),
-    ACOS(new Function("acos") {
+    ACOS(new OneArgumentFunction("acos") {
         @Override
-        public double apply(double... args) {
-            return Math.acos(args[0]);
+        public double apply(double arg) {
+            return Math.acos(arg);
         }
     }),
-    ASIN(new Function("asin") {
+    ASIN(new OneArgumentFunction("asin") {
         @Override
-        public double apply(double... args) {
-            return Math.asin(args[0]);
+        public double apply(double arg) {
+            return Math.asin(arg);
         }
     }),
-    ATAN(new Function("atan") {
+    ATAN(new OneArgumentFunction("atan") {
         @Override
-        public double apply(double... args) {
-            return Math.atan(args[0]);
+        public double apply(double arg) {
+            return Math.atan(arg);
         }
     }),
-    CBRT(new Function("cbrt") {
+    CBRT(new OneArgumentFunction("cbrt") {
         @Override
-        public double apply(double... args) {
-            return Math.cbrt(args[0]);
+        public double apply(double arg) {
+            return Math.cbrt(arg);
         }
     }),
-    CEIL(new Function("ceil") {
+    CEIL(new OneArgumentFunction("ceil") {
         @Override
-        public double apply(double... args) {
-            return Math.ceil(args[0]);
+        public double apply(double arg) {
+            return Math.ceil(arg);
         }
     }),
-    FLOOR(new Function("floor") {
+    FLOOR(new OneArgumentFunction("floor") {
         @Override
-        public double apply(double... args) {
-            return Math.floor(args[0]);
+        public double apply(double arg) {
+            return Math.floor(arg);
         }
     }),
-    SINH(new Function("sinh") {
+    SINH(new OneArgumentFunction("sinh") {
         @Override
-        public double apply(double... args) {
-            return Math.sinh(args[0]);
+        public double apply(double arg) {
+            return Math.sinh(arg);
         }
     }),
-    SQRT(new Function("sqrt") {
+    SQRT(new OneArgumentFunction("sqrt") {
         @Override
-        public double apply(double... args) {
-            return Math.sqrt(args[0]);
+        public double apply(double arg) {
+            return Math.sqrt(arg);
         }
     }),
-    TANH(new Function("tanh") {
+    TANH(new OneArgumentFunction("tanh") {
         @Override
-        public double apply(double... args) {
-            return Math.tanh(args[0]);
+        public double apply(double arg) {
+            return Math.tanh(arg);
         }
     }),
-    COSH(new Function("cosh") {
+    COSH(new OneArgumentFunction("cosh") {
         @Override
-        public double apply(double... args) {
-            return Math.cosh(args[0]);
+        public double apply(double arg) {
+            return Math.cosh(arg);
         }
     }),
-    POW(new Function("pow", 2) {
+    POW(new TwoArgumentFunction("pow") {
         @Override
-        public double apply(double... args) {
-            return Math.pow(args[0], args[1]);
+        public double apply(double arg1, double arg2) {
+            return Math.pow(arg1, arg2);
         }
     }),
-    EXP(new Function("exp") {
+    EXP(new OneArgumentFunction("exp") {
         @Override
-        public double apply(double... args) {
-            return Math.exp(args[0]);
+        public double apply(double arg) {
+            return Math.exp(arg);
         }
     }),
-    EXPM1(new Function("expm1") {
+    EXPM1(new OneArgumentFunction("expm1") {
         @Override
-        public double apply(double... args) {
-            return Math.expm1(args[0]);
+        public double apply(double arg) {
+            return Math.expm1(arg);
         }
     }),
-    LOG10(new Function("log10") {
+    LOG10(new OneArgumentFunction("log10") {
         @Override
-        public double apply(double... args) {
-            return Math.log10(args[0]);
+        public double apply(double arg) {
+            return Math.log10(arg);
         }
     }),
-    LOG2(new Function("log2") {
+    LOG2(new OneArgumentFunction("log2") {
         @Override
-        public double apply(double... args) {
-            return Math.log(args[0]) / Math.log(2d);
+        public double apply(double arg) {
+            return Math.log(arg) / Math.log(2d);
         }
     }),
-    SIGNUM(new Function("signum") {
+    SIGNUM(new OneArgumentFunction("signum") {
         @Override
-        public double apply(double... args) {
-            if (args[0] > 0) {
+        public double apply(double arg) {
+            if (arg > 0) {
                 return 1;
-            } else if (args[0] < 0) {
+            } else if (arg < 0) {
                 return -1;
             } else {
                 return 0;
             }
+        }
+    }),
+    AVG(new DynamicArgumentFunction("avg", 1, 100) {
+        @Override
+        public double apply(double... args) {
+            if (args.length == 0) {
+                throw new VariableNotSetException("Function 'avg' has no arguments.");
+            }
+            double sum = 0;
+            for (double arg : args) {
+                sum += arg;
+            }
+            return sum / args.length;
         }
     });
 
@@ -183,7 +198,8 @@ public enum Functions {
     private static Map<String, Function> init() {
         Map<String, Function> result = new HashMap<>();
         for (Functions functions : Functions.values()) {
-            result.put(functions.name().toLowerCase(), functions.function);
+            Function function = functions.function;
+            result.put(function.name, function);
         }
         return result;
     }

@@ -16,15 +16,13 @@
 package net.objecthunter.exp4j;
 
 import net.objecthunter.exp4j.exceptions.ParseExpressionException;
-import net.objecthunter.exp4j.exceptions.VariableNotSetException;
+import net.objecthunter.exp4j.function.DynamicArgumentFunction;
 import net.objecthunter.exp4j.function.Function;
-
-import org.junit.Assert;
+import net.objecthunter.exp4j.function.PredefinedArgumentFunction;
+import net.objecthunter.exp4j.function.ZeroArgumentFunction;
 import org.junit.Test;
 
 import java.util.Date;
-
-import static org.junit.Assert.assertTrue;
 
 
 public class ExpressionValidateTest {
@@ -32,7 +30,7 @@ public class ExpressionValidateTest {
 	/**
 	 * Dummy function with 2 arguments.
 	 */
-	Function beta = new Function("beta", 2) {
+	private Function beta = new DynamicArgumentFunction("beta", 1, 2) {
 
 		@Override
 		public double apply(double... args) {
@@ -43,7 +41,7 @@ public class ExpressionValidateTest {
 	/**
 	 * Dummy function with 3 arguments.
 	 */
-	Function gamma = new Function("gamma", 3) {
+	private Function gamma = new PredefinedArgumentFunction("gamma", 3) {
 
 		@Override
 		public double apply(double... args) {
@@ -54,7 +52,7 @@ public class ExpressionValidateTest {
 	/**
 	 * Dummy function with 7 arguments.
 	 */
-	Function eta = new Function("eta", 7) {
+	private Function eta = new PredefinedArgumentFunction("eta", 7) {
 
 		@Override
 		public double apply(double... args) {
@@ -226,7 +224,7 @@ public class ExpressionValidateTest {
 
 	@Test(expected = ParseExpressionException.class)
 	public void testValidateInvalidFunctionWithTooFewArguments() {
-		Expression exp = new ExpressionBuilder("beta(1)")
+		Expression exp = new ExpressionBuilder("beta()")
 			.functions(beta)
 			.build();
 		exp.validateExpression();
@@ -259,9 +257,9 @@ public class ExpressionValidateTest {
 	// https://github.com/fasseg/exp4j/issues/59
 	@Test
 	public void testNoArgFunctionValidation() {
-		Function now = new Function("now", 0) {
+		Function now = new ZeroArgumentFunction("now") {
 			@Override
-			public double apply(double... args) {
+			public double apply() {
 				return (double) new Date().getTime();
 			}
 		};

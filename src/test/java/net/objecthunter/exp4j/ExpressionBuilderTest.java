@@ -31,6 +31,10 @@ import net.objecthunter.exp4j.exceptions.UnknownFunctionOrVariableException;
 import net.objecthunter.exp4j.exceptions.VariableNotSetException;
 import net.objecthunter.exp4j.function.Function;
 import net.objecthunter.exp4j.function.Functions;
+import net.objecthunter.exp4j.function.DynamicArgumentFunction;
+import net.objecthunter.exp4j.function.OneArgumentFunction;
+import net.objecthunter.exp4j.function.PredefinedArgumentFunction;
+import net.objecthunter.exp4j.function.TwoArgumentFunction;
 import net.objecthunter.exp4j.operator.Operator;
 
 import org.junit.Test;
@@ -103,11 +107,11 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testExpressionBuilder4() {
-        Function log2 = new Function("log2", 1) {
+        Function log2 = new OneArgumentFunction("log2") {
 
             @Override
-            public double apply(double... args) {
-                return Math.log(args[0]) / Math.log(2);
+            public double apply(double arg) {
+                return Math.log(arg) / Math.log(2);
             }
         };
         double result = new ExpressionBuilder("log2(4)")
@@ -121,7 +125,7 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testExpressionBuilder5() {
-        Function avg = new Function("avg", 4) {
+        Function avg = new DynamicArgumentFunction("avg", 4, 10) {
 
             @Override
             public double apply(double... args) {
@@ -281,11 +285,11 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testFunction1() {
-        Function custom = new Function("timespi") {
+        Function custom = new OneArgumentFunction("timespi") {
 
             @Override
-            public double apply(double... values) {
-                return values[0] * Math.PI;
+            public double apply(double value) {
+                return value * Math.PI;
             }
         };
         Expression e = new ExpressionBuilder("timespi(x)")
@@ -299,11 +303,11 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testFunction2() {
-        Function custom = new Function("loglog") {
+        Function custom = new OneArgumentFunction("loglog") {
 
             @Override
-            public double apply(double... values) {
-                return Math.log(Math.log(values[0]));
+            public double apply(double value) {
+                return Math.log(Math.log(value));
             }
         };
         Expression e = new ExpressionBuilder("loglog(x)")
@@ -317,18 +321,18 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testFunction3() {
-        Function custom1 = new Function("foo") {
+        Function custom1 = new OneArgumentFunction("foo") {
 
             @Override
-            public double apply(double... values) {
-                return values[0] * Math.E;
+            public double apply(double value) {
+                return value * Math.E;
             }
         };
-        Function custom2 = new Function("bar") {
+        Function custom2 = new OneArgumentFunction("bar") {
 
             @Override
-            public double apply(double... values) {
-                return values[0] * Math.PI;
+            public double apply(double value) {
+                return value * Math.PI;
             }
         };
         Expression e = new ExpressionBuilder("foo(bar(x))")
@@ -343,11 +347,11 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testFunction4() {
-        Function custom1 = new Function("foo") {
+        Function custom1 = new OneArgumentFunction("foo") {
 
             @Override
-            public double apply(double... values) {
-                return values[0] * Math.E;
+            public double apply(double value) {
+                return value * Math.E;
             }
         };
         double varX = 32.24979131d;
@@ -362,18 +366,18 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testFunction5() {
-        Function custom1 = new Function("foo") {
+        Function custom1 = new OneArgumentFunction("foo") {
 
             @Override
-            public double apply(double... values) {
-                return values[0] * Math.E;
+            public double apply(double value) {
+                return value * Math.E;
             }
         };
-        Function custom2 = new Function("bar") {
+        Function custom2 = new OneArgumentFunction("bar") {
 
             @Override
-            public double apply(double... values) {
-                return values[0] * Math.PI;
+            public double apply(double value) {
+                return value * Math.PI;
             }
         };
         double varX = 32.24979131d;
@@ -389,18 +393,18 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testFunction6() {
-        Function custom1 = new Function("foo") {
+        Function custom1 = new OneArgumentFunction("foo") {
 
             @Override
-            public double apply(double... values) {
-                return values[0] * Math.E;
+            public double apply(double value) {
+                return value * Math.E;
             }
         };
-        Function custom2 = new Function("bar") {
+        Function custom2 = new OneArgumentFunction("bar") {
 
             @Override
-            public double apply(double... values) {
-                return values[0] * Math.PI;
+            public double apply(double value) {
+                return value * Math.PI;
             }
         };
         double varX = 32.24979131d;
@@ -415,11 +419,11 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testFunction7() {
-        Function custom1 = new Function("half") {
+        Function custom1 = new OneArgumentFunction("half") {
 
             @Override
-            public double apply(double... values) {
-                return values[0] / 2;
+            public double apply(double value) {
+                return value / 2;
             }
         };
         Expression e = new ExpressionBuilder("half(x)")
@@ -432,11 +436,11 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testFunction10() {
-        Function custom1 = new Function("max", 2) {
+        Function custom1 = new TwoArgumentFunction("max") {
 
             @Override
-            public double apply(double... values) {
-                return values[0] < values[1] ? values[1] : values[0];
+            public double apply(double value1, double value2) {
+                return Math.max(value1, value2);
             }
         };
         Expression e =
@@ -451,11 +455,11 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testFunction11() {
-        Function custom1 = new Function("power", 2) {
+        Function custom1 = new TwoArgumentFunction("power") {
 
             @Override
-            public double apply(double... values) {
-                return Math.pow(values[0], values[1]);
+            public double apply(double value1, double value2) {
+                return Math.pow(value1, value2);
             }
         };
         Expression e =
@@ -471,12 +475,12 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testFunction12() {
-        Function custom1 = new Function("max", 5) {
+        Function custom1 = new DynamicArgumentFunction("max", 5, 10) {
 
             @Override
             public double apply(double... values) {
                 double max = values[0];
-                for (int i = 1; i < numArguments; i++) {
+                for (int i = 1; i < values.length; i++) {
                     if (values[i] > max) {
                         max = values[i];
                     }
@@ -492,12 +496,12 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testFunction13() {
-        Function custom1 = new Function("max", 3) {
+        Function custom1 = new DynamicArgumentFunction("max", 3, 10) {
 
             @Override
             public double apply(double... values) {
                 double max = values[0];
-                for (int i = 1; i < numArguments; i++) {
+                for (int i = 1; i < values.length; i++) {
                     if (values[i] > max) {
                         max = values[i];
                     }
@@ -516,11 +520,11 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testFunction14() {
-        Function custom1 = new Function("multiply", 2) {
+        Function custom1 = new TwoArgumentFunction("multiply") {
 
             @Override
-            public double apply(double... values) {
-                return values[0] * values[1];
+            public double apply(double value1, double value2) {
+                return value1 * value2;
             }
         };
         double varX = 1;
@@ -536,11 +540,11 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testFunction15() {
-        Function custom1 = new Function("timesPi") {
+        Function custom1 = new OneArgumentFunction("timesPi") {
 
             @Override
-            public double apply(double... values) {
-                return values[0] * Math.PI;
+            public double apply(double value) {
+                return value * Math.PI;
             }
         };
         double varX = 1;
@@ -556,7 +560,7 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testFunction16()   {
-        Function custom1 = new Function("multiply", 3) {
+        Function custom1 = new DynamicArgumentFunction("multiply", 3, 10) {
 
             @Override
             public double apply(double... values) {
@@ -575,11 +579,11 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testFunction17()   {
-        Function custom1 = new Function("timesPi") {
+        Function custom1 = new OneArgumentFunction("timesPi") {
 
             @Override
-            public double apply(double... values) {
-                return values[0] * Math.PI;
+            public double apply(double value) {
+                return value * Math.PI;
             }
         };
         double varX = Math.E;
@@ -597,15 +601,11 @@ public class ExpressionBuilderTest {
     // i have this test, which fails in 0.2.9
     @Test
     public void testFunction18()   {
-        Function minFunction = new Function("min", 2) {
+        Function minFunction = new TwoArgumentFunction("min") {
 
             @Override
-            public double apply(double[] values) {
-                double currentMin = Double.POSITIVE_INFINITY;
-                for (double value : values) {
-                    currentMin = Math.min(currentMin, value);
-                }
-                return currentMin;
+            public double apply(double value1, double value2) {
+                return Math.min(value1, value2);
             }
         };
         ExpressionBuilder b = new ExpressionBuilder("-min(5, 0) + 10")
@@ -619,10 +619,10 @@ public class ExpressionBuilderTest {
     // i have this test, which fails in 0.3.2
     @Test
     public void testFunction19()   {
-        Function minFunction = new Function("power", 2) {
+        Function minFunction = new DynamicArgumentFunction("power", 2, 2) {
 
             @Override
-            public double apply(double[] values) {
+            public double apply(double... values) {
                 return Math.pow(values[0], values[1]);
             }
         };
@@ -637,12 +637,12 @@ public class ExpressionBuilderTest {
     // this test has been added in 0.3.5
     @Test
     public void testFunction20()   {
-        Function maxFunction = new Function("max", 3) {
+        Function maxFunction = new PredefinedArgumentFunction("max", 3) {
 
             @Override
             public double apply(double... values) {
                 double max = values[0];
-                for (int i = 1; i < numArguments; i++) {
+                for (int i = 1; i < values.length; i++) {
                     if (values[i] > max) {
                         max = values[i];
                     }
@@ -653,7 +653,7 @@ public class ExpressionBuilderTest {
         ExpressionBuilder b = new ExpressionBuilder("max(1,2,3)")
                 .function(maxFunction);
         double calculated = b.build().evaluate();
-        assertEquals(3, maxFunction.getNumArguments());
+        assertEquals(3, maxFunction.getNumberOfArguments());
         assertEquals(3, calculated, 0.0);
     }
 
@@ -844,10 +844,10 @@ public class ExpressionBuilderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidFunction1()   {
-        new Function("1gd") {
+        new OneArgumentFunction("1gd") {
 
             @Override
-            public double apply(double... args) {
+            public double apply(double arg) {
                 return 0;
             }
         };
@@ -855,10 +855,10 @@ public class ExpressionBuilderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidFunction2()   {
-        new Function("+1gd") {
+        new OneArgumentFunction("+1gd") {
 
             @Override
-            public double apply(double... args) {
+            public double apply(double arg) {
                 return 0;
             }
         };
@@ -983,11 +983,11 @@ public class ExpressionBuilderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testSameName()   {
-        Function custom = new Function("bar") {
+        Function custom = new OneArgumentFunction("bar") {
 
             @Override
-            public double apply(double... values) {
-                return values[0] / 2;
+            public double apply(double value) {
+                return value / 2;
             }
         };
         double varBar = 1.3d;
@@ -1305,7 +1305,7 @@ public class ExpressionBuilderTest {
     @Test
     public void testVarMap()   {
         String expr = "12.23 * foo - bar";
-        Map<String, Double> variables = new HashMap<String, Double>();
+        Map<String, Double> variables = new HashMap<>();
         variables.put("foo", 2d);
         variables.put("bar", 3.3d);
         Expression e = new ExpressionBuilder(expr)
@@ -1325,7 +1325,7 @@ public class ExpressionBuilderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidNumberofArguments2()   {
-        new Function("avg", 4) {
+        new DynamicArgumentFunction("avg", 4, 3) {
 
             @Override
             public double apply(double... args) {
@@ -1616,10 +1616,10 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testDocumentationExample6()   {
-        Function logb = new Function("logb", 2) {
+        Function logb = new TwoArgumentFunction("logb") {
             @Override
-            public double apply(double... args) {
-                return Math.log(args[0]) / Math.log(args[1]);
+            public double apply(double arg1, double arg2) {
+                return Math.log(arg1) / Math.log(arg2);
             }
         };
         double result = new ExpressionBuilder("logb(8, 2)")
@@ -1632,7 +1632,7 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testDocumentationExample7()   {
-        Function avg = new Function("avg", 4) {
+        Function avg = new DynamicArgumentFunction("avg", 4, 10) {
 
             @Override
             public double apply(double... args) {
@@ -2582,11 +2582,11 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testUnicodeVariable3()   {
-        Function log = new Function("λωγ", 1) {
+        Function log = new OneArgumentFunction("λωγ") {
 
             @Override
-            public double apply(double... args) {
-                return log(args[0]);
+            public double apply(double arg) {
+                return log(arg);
             }
         };
 
@@ -2600,11 +2600,11 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testUnicodeVariable4()   {
-        Function log = new Function("λ_ωγ", 1) {
+        Function log = new OneArgumentFunction("λ_ωγ") {
 
             @Override
-            public double apply(double... args) {
-                return log(args[0]);
+            public double apply(double arg) {
+                return log(arg);
             }
         };
 
@@ -2694,10 +2694,10 @@ public class ExpressionBuilderTest {
     // https://github.com/fasseg/exp4j/issues/23
     @Test
     public void testSecondArgumentNegative() {
-        Function round = new Function("MULTIPLY", 2) {
+        Function round = new TwoArgumentFunction("MULTIPLY") {
             @Override
-            public double apply(double... args) {
-                return Math.round(args[0] * args[1]);
+            public double apply(double arg1, double arg2) {
+                return Math.round(arg1 * arg2);
             }
         };
         double result = new ExpressionBuilder("MULTIPLY(2,-1)")
@@ -2781,9 +2781,9 @@ public class ExpressionBuilderTest {
     public void testSameVariableAndUserFunctionName() {
         new ExpressionBuilder("2*tr+tr(2)")
                 .variables("tr")
-                .function(new Function("tr") {
+                .function(new OneArgumentFunction("tr") {
                     @Override
-                    public double apply(double... args) {
+                    public double apply(double arg) {
                         return 0;
                     }
                 })
@@ -2819,11 +2819,11 @@ public class ExpressionBuilderTest {
 
     @Test
     public void testCustomPercent() {
-        Function percentage = new Function("percentage", 2) {
+        Function percentage = new TwoArgumentFunction("percentage") {
             @Override
-            public double apply(double... args) {
-                double val = args[0];
-                double percent = args[1];
+            public double apply(double arg1, double arg2) {
+                double val = arg1;
+                double percent = arg2;
                 if (percent < 0) {
                     return val - val * Math.abs(percent)/100d;
                 } else {

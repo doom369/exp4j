@@ -16,17 +16,23 @@
 package net.objecthunter.exp4j.tokenizer;
 
 import net.objecthunter.exp4j.ArrayStack;
+import net.objecthunter.exp4j.function.DynamicArgumentFunction;
 import net.objecthunter.exp4j.function.Function;
+import net.objecthunter.exp4j.function.OneArgumentFunction;
+import net.objecthunter.exp4j.function.PredefinedArgumentFunction;
+import net.objecthunter.exp4j.function.TwoArgumentFunction;
 
 import java.util.Map;
 
 public class FunctionToken extends Token {
 
     private final Function function;
+    private int dynamicNumberOfArguments;
 
     public FunctionToken(Function function) {
         super(Token.TOKEN_FUNCTION);
         this.function = function;
+        this.dynamicNumberOfArguments = 1;
     }
 
     public Function getFunction() {
@@ -35,15 +41,54 @@ public class FunctionToken extends Token {
 
     @Override
     public void process(ArrayStack output, Map<String, Double> variables) {
-        int numArguments = function.getNumArguments();
-        if (output.size() < numArguments) {
-            throw new IllegalArgumentException("Invalid number of arguments available for '" + function.getName() + "' function");
+        double result = apply(output);
+        output.push(result);
+    }
+
+    private double apply(ArrayStack output) {
+        if (this.function instanceof OneArgumentFunction) {
+            OneArgumentFunction oneArgumentFunction = (OneArgumentFunction) this.function;
+            int functionArguments = oneArgumentFunction.getNumberOfArguments();
+            verify(output.size(), functionArguments);
+            return oneArgumentFunction.apply(output.pop());
+        } else if (this.function instanceof TwoArgumentFunction) {
+            TwoArgumentFunction twoArgumentFunction = (TwoArgumentFunction) this.function;
+            int functionArguments = twoArgumentFunction.getNumberOfArguments();
+            verify(output.size(), functionArguments);
+            double right = output.pop();
+            double left = output.pop();
+            return twoArgumentFunction.apply(left, right);
+        } else if (this.function instanceof PredefinedArgumentFunction) {
+            PredefinedArgumentFunction predefinedArgumentFunction = (PredefinedArgumentFunction) this.function;
+            return predefinedArgumentFunction.apply(output);
+        } else {
+            DynamicArgumentFunction dynamicArgumentFunction = (DynamicArgumentFunction) this.function;
+            /* collect the arguments from the stack */
+            int functionArguments = dynamicNumberOfArguments;
+            dynamicArgumentFunction.verify(functionArguments);
+            double[] args = new double[functionArguments];
+            for (int j = functionArguments - 1; j >= 0; j--) {
+                args[j] = output.pop();
+            }
+            return dynamicArgumentFunction.apply(args);
         }
-        /* collect the arguments from the stack */
-        double[] args = new double[numArguments];
-        for (int j = numArguments - 1; j >= 0; j--) {
-            args[j] = output.pop();
+    }
+
+    private void verify(int stackSize, int numberOfArguments) {
+        if (stackSize < numberOfArguments) {
+            throw new IllegalArgumentException("Invalid number of arguments available for '"
+                    + function.getName() + "' function");
         }
-        output.push(function.apply(args));
+    }
+
+    public int getDynamicNumberOfArguments() {
+        if (function instanceof DynamicArgumentFunction) {
+            return dynamicNumberOfArguments;
+        }
+        return function.getNumberOfArguments();
+    }
+
+    public void incrArgumentsCounter() {
+        this.dynamicNumberOfArguments++;
     }
 }

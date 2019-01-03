@@ -15,8 +15,12 @@
  */
 package net.objecthunter.exp4j.tokenizer;
 
-import static net.objecthunter.exp4j.TestUtil.*;
-import static org.junit.Assert.*;
+import net.objecthunter.exp4j.function.Function;
+import net.objecthunter.exp4j.function.Functions;
+import net.objecthunter.exp4j.function.OneArgumentFunction;
+import net.objecthunter.exp4j.function.TwoArgumentFunction;
+import net.objecthunter.exp4j.operator.Operator;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,11 +28,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import net.objecthunter.exp4j.function.Function;
-import net.objecthunter.exp4j.function.Functions;
-import net.objecthunter.exp4j.operator.Operator;
-
-import org.junit.Test;
+import static net.objecthunter.exp4j.TestUtil.assertCloseParenthesesToken;
+import static net.objecthunter.exp4j.TestUtil.assertFunctionSeparatorToken;
+import static net.objecthunter.exp4j.TestUtil.assertFunctionToken;
+import static net.objecthunter.exp4j.TestUtil.assertNumberToken;
+import static net.objecthunter.exp4j.TestUtil.assertOpenParenthesesToken;
+import static net.objecthunter.exp4j.TestUtil.assertOperatorToken;
+import static net.objecthunter.exp4j.TestUtil.assertVariableToken;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TokenizerTest {
 
@@ -375,11 +383,11 @@ public class TokenizerTest {
 
     @Test
     public void testTokenization18() {
-        final Function log2 = new Function("log2") {
+        final Function log2 = new OneArgumentFunction("log2") {
 
             @Override
-            public double apply(double... args) {
-                return Math.log(args[0]) / Math.log(2d);
+            public double apply(double arg) {
+                return Math.log(arg) / Math.log(2d);
             }
         };
 
@@ -404,15 +412,12 @@ public class TokenizerTest {
 
     @Test
     public void testTokenization19() {
-        Function avg = new Function("avg", 2) {
+        Function avg = new TwoArgumentFunction("avg") {
 
             @Override
-            public double apply(double... args) {
-                double sum = 0;
-                for (double arg : args) {
-                    sum += arg;
-                }
-                return sum / args.length;
+            public double apply(double arg1, double arg2) {
+                double sum = arg1 + arg2;
+                return sum / 2;
             }
         };
         Map<String, Function> funcs = new HashMap<>(1);
